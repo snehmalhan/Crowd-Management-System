@@ -1,0 +1,113 @@
+<div class="dashboard-container">
+
+    <div class="stats-grid">
+        <h2>Occupancy</h2>
+        <div class="stat-card">
+            <div class="stat-content borderRight">
+                <p class="stat-label">Live Occupancy</p>
+                <h3 class="stat-value">{{liveCount}}</h3>
+                <div class="stat-icon">
+                    @if (liveOccupancyChange >= 0) {
+                    <img src="images/up-arrow.png" alt="Up">
+                    } @else {
+                    <img src="images/down-arrow.png" alt="Down">
+                    }
+                </div>
+                <span class="stat-change" [class.negative]="liveOccupancyChange < 0"
+                    [class.positive]="liveOccupancyChange >= 0">
+                    {{ liveOccupancyChange < 0 ? (liveOccupancyChange * -1) : liveOccupancyChange }}% {{
+                        liveOccupancyChange < 0 ? 'Less' : 'More' }} than yesterday</span>
+            </div>
+            <div class="stat-content">
+                <p class="stat-label">Today’s Footfall</p>
+                <h3 class="stat-value">{{footfallData ? footfallData?.footfall : 0}}</h3>
+                <div class="stat-icon">
+                    @if (footfallChange >= 0) {
+                    <img src="images/up-arrow.png" alt="Up">
+                    } @else {
+                    <img src="images/down-arrow.png" alt="Down">
+                    }
+                </div>
+                <span class="stat-change" [class.negative]="footfallChange < 0" [class.positive]="footfallChange >= 0">
+                    {{ footfallChange < 0 ? (footfallChange * -1) : footfallChange }}% {{ footfallChange < 0 ? 'Less'
+                        : 'More' }} than yesterday </span>
+            </div>
+
+        </div>
+        <div class="stat-card">
+            <div class="stat-content">
+                <p class="stat-label">Avg Dwell Time</p>
+                <h3 class="stat-value">{{dwellData ? formatMinutesToMinSec(dwellData?.avgDwellMinutes) : 0}}</h3>
+                <div class="stat-icon">
+                    @if (dwellChange >= 0) {
+                    <img src="images/up-arrow.png" alt="Up">
+                    } @else {
+                    <img src="images/down-arrow.png" alt="Down">
+                    }
+                </div>
+                <span class="stat-change" [class.negative]="dwellChange < 0" [class.positive]="dwellChange >= 0">
+                    {{ dwellChange < 0 ? (dwellChange * -1) : dwellChange }}% {{ dwellChange < 0 ? 'Less' : 'More' }}
+                        than yesterday </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-header">
+            <h3>Overall Occupancy</h3>
+        </div>
+        <div class="chart-container">
+            @if(!isOccupancyLoading){
+            <canvas #occupancyChart></canvas>
+            }@else{
+            <div class="chart-loader">
+                <div class="chart-spinner"></div>
+                <p>Loading Occupancy...</p>
+            </div>
+            }
+        </div>
+    </div>
+
+    <div class="charts-grid row">
+        <div class="col-md-4">
+            <div class="chart-card table-card">
+                <div class="chart-header">
+                    <div>
+                        <h3>Chart of Demographics</h3>
+                    </div>
+                </div>
+                <div class="Demographics">
+                    @if(!isDemographicsLoading){
+                    <canvas #revenueChart></canvas>
+                    }@else{
+                    <div class="chart-loader">
+                        <div class="chart-spinner"></div>
+                        <p>Loading Demographics...</p>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="chart-card table-card">
+                <div class="chart-header">
+                    <div>
+                        <h3>Demographics Analysis</h3>
+                    </div>
+                </div>
+                <div class="DemographicsAnalysis">
+                    @if(!isDemographicsLoading){
+                    <canvas #trafficChart></canvas>
+                    }@else{
+                    <div class="chart-loader">
+                        <div class="chart-spinner"></div>
+                        <p>Loading Demographics...</p>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,77 @@
+<div class="crowd-entries-container">
+
+  <div class="table-card">
+    <table class="entries-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Sex</th>
+          <th>Entry</th>
+          <th>Exit</th>
+          <th>Dwell Time</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @if (isTableLoading) {
+        <tr>
+          <td colspan="5">
+            <div class="table-loader">
+              <span class="spinner"></span>
+              <span>Loading entries...</span>
+            </div>
+          </td>
+        </tr>
+        }
+
+        @else if (hasEntries) {
+        @for (row of paginatedEntries; track row.name) {
+        <tr>
+          <td class="name-cell">
+            <img class="avatar" src="images/Profile.png" alt="User Avatar" />
+            <span>{{ row.name }}</span>
+          </td>
+          <td>{{ row.sex | titlecase }}</td>
+          <td>{{ row.entry }}</td>
+          <td>{{ row.exit }}</td>
+          <td>{{ row.dwell }}</td>
+        </tr>
+        }
+        }
+
+        @else {
+        <tr>
+          <td colspan="5">
+            <div class="no-data">No data found</div>
+          </td>
+        </tr>
+        }
+
+      </tbody>
+
+    </table>
+
+
+  </div>
+
+  <div class="pagination">
+    <button class="pagination-btn material-symbols-outlined" [disabled]="pageIndex === 1"
+      (click)="goToPage(pageIndex - 1)">
+      arrow_back_ios_new
+    </button>
+
+    @for (p of visiblePages; track p) {
+    <span class="page-btn" [class.active]="p === pageIndex" (click)="goToPage(p)">
+      {{ p }}
+    </span>
+    }
+
+    <button class="pagination-btn material-symbols-outlined" [disabled]="pageIndex === totalPages"
+      (click)="goToPage(pageIndex + 1)">
+      arrow_forward_ios
+    </button>
+
+  </div>
+
+</div>

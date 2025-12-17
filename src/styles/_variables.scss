@@ -1,0 +1,133 @@
+// ============================================
+// Color Palette
+// ============================================
+
+// Primary Colors
+$primary-blue: #4318FF;
+$primary-blue-hover: #3311CC;
+$primary-blue-light: #E9E3FF;
+
+// Backgrounds
+$dark-sidebar: #1B1D29;
+$light-bg: #F4F7FE;
+$white: #FFFFFF;
+$gray-bg: #F8F9FA;
+
+// Text Colors
+$text-dark: #2B3674;
+$text-gray: #A3AED0;
+$text-light: #8F9BBA;
+$text-white: #FFFFFF;
+
+// Status Colors
+$success: #05CD99;
+$success-light: #E5F9F4;
+$warning: #FFAB00;
+$warning-light: #FFF4E0;
+$danger: #EE5D50;
+$danger-light: #FDECEA;
+$info: #4318FF;
+$info-light: #E9E3FF;
+
+// Border & Dividers
+$border-color: #E9EDF7;
+$divider: #F4F7FE;
+$border-light: #F1F3F9;
+
+// ============================================
+// Typography
+// ============================================
+
+$font-family-primary: "IBM Plex Sans", sans-serif;
+
+// Font Sizes
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+$font-size-2xl: 34px;
+
+// Font Weights
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Line Heights
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// ============================================
+// Spacing
+// ============================================
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 20px;
+$spacing-2xl: 24px;
+$spacing-3xl: 32px;
+$spacing-4xl: 40px;
+$spacing-5xl: 48px;
+
+// ============================================
+// Layout Dimensions
+// ============================================
+
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 60px;
+$header-height: 80px;
+$content-padding: 24px;
+
+// ============================================
+// Border Radius
+// ============================================
+
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 20px;
+$radius-full: 9999px;
+
+// ============================================
+// Shadows
+// ============================================
+
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+$shadow-card: 0px 18px 40px rgba(112, 144, 176, 0.12);
+
+// ============================================
+// Transitions
+// ============================================
+
+$transition-fast: 150ms ease-in-out;
+$transition-base: 250ms ease-in-out;
+$transition-slow: 350ms ease-in-out;
+
+// ============================================
+// Breakpoints
+// ============================================
+
+$breakpoint-mobile: 576px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+$breakpoint-wide: 1440px;
+
+// ============================================
+// Z-Index Layers
+// ============================================
+
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;

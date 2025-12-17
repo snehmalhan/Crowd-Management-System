@@ -1,0 +1,74 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#9aa2ff" type="line-scale-pulse-out"
+  [fullScreen]="true">
+  <div class="full-spinner"></div>
+  <p style="color: white"> Loading... </p>
+</ngx-spinner>
+<div class="header_wrap">
+  <header class="header">
+    <div class="header-left">
+      <h1 class="page-title">Crowd Solutions</h1>
+      <div class="city-wrap">
+        <img src="images/location-icon.png" alt="">
+        <select (change)="onSiteChange($event)">
+          <option *ngFor="let site of siteList" [value]="site.siteId">
+            {{ site.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="icon-btn" title="Notifications" (click)="toggleAlerts()">
+        <img src="images/alert.png" alt="alert">
+      </button>
+
+
+      <div class="user-profile">
+        <img src="images/Profile.png" alt="User Avatar" class="user-avatar" />
+      </div>
+    </div>
+  </header>
+
+
+
+  <div class="dashboard-header">
+    <h1>Overview</h1>
+    <div class="date-wise">
+      <img src="images/calender.png" alt="User Avatar" class="user-avatar" />
+      <select [value]="selectedDateFilter" (change)="onDateChange($any($event.target).value)">
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+        <option value="year">This Year</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+
+<div class="alerts-overlay" *ngIf="showAlerts" (click)="closeAlerts()"></div>
+
+<div class="alerts-panel" [class.open]="showAlerts">
+  <div class="alerts-header">
+    <h3>Alerts</h3>
+    <button class="close-btn" (click)="closeAlerts()">✕</button>
+  </div>
+
+  <div class="alerts-list">
+    <div class="alert-card" *ngFor="let alert of alerts" [ngClass]="alert.priority?.toLowerCase() || 'medium'">
+      <p class="date">{{ formatAlertDate(alert.ts ) }}</p>
+      <p class="title">{{ alert.personName }}</p>
+      <p class="zone">
+        <span class="material-symbols-outlined">
+          distance
+        </span>
+        {{ alert.zoneName }}
+      </p>
+      <span class="badge" [ngClass]="alert.severity?.toLowerCase() || 'medium'">{{ alert.severity || 'Medium' }}</span>
+    </div>
+    <div *ngIf="alerts.length === 0" class="no-alerts">
+      <p>No new alerts.</p>
+    </div>
+  </div>
+</div>
