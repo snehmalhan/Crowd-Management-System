@@ -48,8 +48,6 @@ export class CrowdEntries implements OnInit, OnDestroy {
     private socketService: SocketService
   ) {}
 
-  /* ===================== INIT ===================== */
-
   ngOnInit(): void {
     this.selectedSiteSub = this.commonService.getFilters$().pipe(
       filter(f => !!f.siteId && !!f.dateRange?.from && !!f.dateRange?.to),
@@ -75,8 +73,6 @@ export class CrowdEntries implements OnInit, OnDestroy {
     this.selectedSiteSub?.unsubscribe();
     this.socketSub?.unsubscribe();
   }
-
-  /* ===================== API ===================== */
 
   getEntryExitData(): void {
     this.isTableLoading = true;
@@ -106,8 +102,6 @@ export class CrowdEntries implements OnInit, OnDestroy {
     });
   }
 
-  /* ===================== SOCKET ===================== */
-
   initSocketListener(): void {
     this.socketSub = this.socketService.listen('alert').subscribe((data: any) => {
       if (!this.selectedSiteId || data.siteId !== this.selectedSiteId) return;
@@ -117,7 +111,6 @@ export class CrowdEntries implements OnInit, OnDestroy {
       this.entries.unshift(newRow);
       this.totalPages = Math.ceil(this.entries.length / this.pageSize);
 
-      // Update table ONLY if user is on page 1
       if (this.pageIndex === 1) {
         this.paginatedEntries.unshift(newRow);
 
@@ -130,7 +123,6 @@ export class CrowdEntries implements OnInit, OnDestroy {
     });
   }
 
-  /* ===================== PAGINATION ===================== */
 
   updatePagination(): void {
     this.totalPages = Math.ceil(this.entries.length / this.pageSize);
@@ -167,7 +159,6 @@ export class CrowdEntries implements OnInit, OnDestroy {
     this.visiblePages = pages;
   }
 
-  /* ===================== MAPPERS ===================== */
 
   mapApiRow(row: any, index: number): EntryRow {
     const entryTime =
@@ -186,7 +177,6 @@ export class CrowdEntries implements OnInit, OnDestroy {
     };
   }
 
-  /* ===================== HELPERS ===================== */
 
   formatdwell(value: number | null | undefined): string {
     if (value == null) return '--';
