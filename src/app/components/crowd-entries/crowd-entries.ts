@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonService } from '../../services/common/common-service';
 import { OverviewDashboardService } from '../../services/overview-dashboard/overview-dashboard.service';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription, filter, distinctUntilChanged, combineLatest } from 'rxjs';
+import { Subscription, filter, distinctUntilChanged } from 'rxjs';
 import { SocketService } from '../../services/socket/socket';
 
 interface EntryRow {
@@ -21,40 +21,38 @@ interface EntryRow {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './crowd-entries.html',
-  styleUrl: './crowd-entries.scss',
+  styleUrl: './crowd-entries.scss'
 })
 export class CrowdEntries implements OnInit, OnDestroy {
-
-  selectedRange = 'today';
 
   pageIndex = 1;
   pageSize = 7;
   totalPages = 0;
 
-  entries: any[] = [];
-  paginatedEntries: any[] = [];
+  entries: EntryRow[] = [];
+  paginatedEntries: EntryRow[] = [];
   visiblePages: number[] = [];
 
   selectedSiteId: string | null = null;
-  selectedSiteSub?: Subscription;
   fromDate: any;
   toDate: any;
+
   isTableLoading = false;
+  selectedSiteSub?: Subscription;
+  socketSub?: Subscription;
 
   constructor(
     private commonService: CommonService,
     private overviewDashboardService: OverviewDashboardService,
     private toastr: ToastrService,
     private socketService: SocketService
-  ) { }
+  ) {}
+
+  /* ===================== INIT ===================== */
 
   ngOnInit(): void {
     this.selectedSiteSub = this.commonService.getFilters$().pipe(
-      filter(f =>
-        !!f.siteId &&
-        !!f.dateRange?.from &&
-        !!f.dateRange?.to
-      ),
+      filter(f => !!f.siteId && !!f.dateRange?.from && !!f.dateRange?.to),
       distinctUntilChanged(
         (a, b) =>
           a.siteId === b.siteId &&
@@ -66,50 +64,36 @@ export class CrowdEntries implements OnInit, OnDestroy {
       this.fromDate = f.dateRange!.from;
       this.toDate = f.dateRange!.to;
 
-      this.getEntryExitData(); // ✅ ONLY ONCE
+      this.pageIndex = 1;
+      this.getEntryExitData();
     });
 
     this.initSocketListener();
   }
 
-  initSocketListener() {
-    this.socketService.listen('alert').subscribe((data: any) => {
-      if (this.selectedSiteId && data.siteId === this.selectedSiteId) {
-        const newRow = this.mapApiRow(data, 0);
-        this.entries.unshift(newRow);
-        this.pageIndex = 1;
-        this.pageSize = 7;
-        this.updatePagination();
-      }
-    });
-  }
-
   ngOnDestroy(): void {
     this.selectedSiteSub?.unsubscribe();
+    this.socketSub?.unsubscribe();
   }
 
+  /* ===================== API ===================== */
 
   getEntryExitData(): void {
     this.isTableLoading = true;
-    let fromUtc = Date.parse(this.fromDate)
-    let toUtc = Date.parse(this.toDate)
+
     const payload = {
       siteId: this.selectedSiteId,
-      fromUtc: fromUtc,
-      toUtc: toUtc,
-      pageSize: this.pageSize,
-      pageNumber: this.pageIndex
+      fromUtc: Date.parse(this.fromDate),
+      toUtc: Date.parse(this.toDate)
     };
 
     this.overviewDashboardService.getEntryExitAnalytics(payload).subscribe({
-      next: (response: any) => {
-        const records = response?.records ?? [];
+      next: (res: any) => {
+        const records = res?.records ?? [];
 
         this.entries = records.map((r: any, i: number) =>
           this.mapApiRow(r, i)
         );
-
-        this.paginatedEntries = this.entries;
 
         this.pageIndex = 1;
         this.updatePagination();
@@ -122,55 +106,48 @@ export class CrowdEntries implements OnInit, OnDestroy {
     });
   }
 
+  /* ===================== SOCKET ===================== */
 
-  mapApiRow(row: any, index: number): EntryRow {
-    const entryTime =
-      row.entryUtc ??
-      (row.direction === 'entry' ? row.ts : null);
+  initSocketListener(): void {
+    this.socketSub = this.socketService.listen('alert').subscribe((data: any) => {
+      if (!this.selectedSiteId || data.siteId !== this.selectedSiteId) return;
 
-    const exitTime =
-      row.exitUtc ??
-      (row.direction === 'exit' ? row.ts : null);
+      const newRow = this.mapApiRow(data, 0);
 
-    return {
-      name: row.personName ?? '—',
-      sex: row.gender ?? '—',
+      this.entries.unshift(newRow);
+      this.totalPages = Math.ceil(this.entries.length / this.pageSize);
 
-      entry: entryTime
-        ? this.formatTo12HourTime(entryTime)
-        : '--',
+      // Update table ONLY if user is on page 1
+      if (this.pageIndex === 1) {
+        this.paginatedEntries.unshift(newRow);
 
-      exit: exitTime
-        ? this.formatTo12HourTime(exitTime)
-        : '--',
+        if (this.paginatedEntries.length > this.pageSize) {
+          this.paginatedEntries.pop();
+        }
+      }
 
-      dwell: this.formatdwell(row.dwellMinutes) ?? '--',
-
-      avatar: row.avatarUrl || `https://i.pravatar.cc/100?img=${index + 1}`
-    };
+      this.buildVisiblePages();
+    });
   }
+
+  /* ===================== PAGINATION ===================== */
 
   updatePagination(): void {
     this.totalPages = Math.ceil(this.entries.length / this.pageSize);
 
-    const startIndex = (this.pageIndex - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
+    const start = (this.pageIndex - 1) * this.pageSize;
+    const end = start + this.pageSize;
 
-    this.paginatedEntries = this.entries.slice(startIndex, endIndex);
-
+    this.paginatedEntries = this.entries.slice(start, end);
     this.buildVisiblePages();
   }
-
-
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
 
     this.pageIndex = page;
     this.updatePagination();
-    this.getEntryExitData();
   }
-
 
   buildVisiblePages(): void {
     const maxVisible = 5;
@@ -190,40 +167,44 @@ export class CrowdEntries implements OnInit, OnDestroy {
     this.visiblePages = pages;
   }
 
+  /* ===================== MAPPERS ===================== */
 
-  onRangeChange(): void {
-    this.pageIndex = 1;
-    this.pageIndex = 9;
-    this.getEntryExitData();
+  mapApiRow(row: any, index: number): EntryRow {
+    const entryTime =
+      row.entryUtc ?? (row.direction === 'entry' ? row.ts : null);
+
+    const exitTime =
+      row.exitUtc ?? (row.direction === 'exit' ? row.ts : null);
+
+    return {
+      name: row.personName ?? '—',
+      sex: row.gender ?? '—',
+      entry: entryTime ? this.formatTo12HourTime(entryTime) : '--',
+      exit: exitTime ? this.formatTo12HourTime(exitTime) : '--',
+      dwell: this.formatdwell(row.dwellMinutes),
+      avatar: row.avatarUrl || `https://i.pravatar.cc/100?img=${index + 1}`
+    };
   }
 
+  /* ===================== HELPERS ===================== */
+
   formatdwell(value: number | null | undefined): string {
-    if (value === null || value === undefined) {
-      return '--';
-    }
-    const hours = Math.floor(value);
-    const minutes = Math.round((value - hours) * 100);
-    return `${hours}:${minutes.toString().padStart(2, '0')}`;
+    if (value == null) return '--';
+    const h = Math.floor(value);
+    const m = Math.round((value - h) * 60);
+    return `${h}:${m.toString().padStart(2, '0')}`;
   }
 
   formatTo12HourTime(utcMillis: number): string {
-    if (!utcMillis) return '--';
-
-    const date = new Date(utcMillis); // UTC → Local automatically
-
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-
-    hours = hours % 12 || 12;
-
-    return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    const d = new Date(utcMillis);
+    let h = d.getHours();
+    const m = d.getMinutes();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h}:${m.toString().padStart(2, '0')} ${ampm}`;
   }
-
 
   get hasEntries(): boolean {
     return this.paginatedEntries.length > 0;
   }
-
-
 }
