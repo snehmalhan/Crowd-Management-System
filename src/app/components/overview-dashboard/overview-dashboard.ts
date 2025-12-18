@@ -110,12 +110,26 @@ export class OverviewDashboard implements OnInit {
     });
   }
 
-  getPreviousDateRange(currentFrom: number, currentTo: number) {
-    const duration = currentTo - currentFrom;
-    const prevTo = currentFrom;
-    const prevFrom = currentFrom - duration;
-    return { prevFromUtc: prevFrom, prevToUtc: prevTo };
-  }
+ getPreviousDateRange(currentFrom: number) {
+  const base = new Date(currentFrom);
+  const start = Date.UTC(
+    base.getUTCFullYear(),
+    base.getUTCMonth(),
+    base.getUTCDate() - 1,
+    0, 0, 0, 0
+  );
+  const end = Date.UTC(
+    base.getUTCFullYear(),
+    base.getUTCMonth(),
+    base.getUTCDate() - 1,
+    23, 59, 59, 999
+  );
+  return {
+    prevFromUtc: start,
+    prevToUtc: end
+  };
+}
+
 
   getComparisonData(payload: any) {
     this.overviewDashboardService.getFootfallAnalytics(payload).subscribe({
@@ -156,9 +170,9 @@ export class OverviewDashboard implements OnInit {
   }
 
   calculateDwellChange() {
-    if (this.dwellData?.avgDwellMinutes !== undefined && this.prevDwellData?.avgDwellMinutes !== undefined) {
-      const current = this.dwellData.avgDwellMinutes;
-      const previous = this.prevDwellData.avgDwellMinutes;
+    if (this.dwellData?.dwellRecords !== undefined && this.prevDwellData?.dwellRecords !== undefined) {
+      const current = this.dwellData.dwellRecords;
+      const previous = this.prevDwellData.dwellRecords;
       if (previous === 0 || !previous) {
         this.dwellChange = current > 0 ? 100 : 0;
       } else {
@@ -177,10 +191,10 @@ export class OverviewDashboard implements OnInit {
       prevAvg = total / this.prevOccupancyData.buckets.length;
     }
 
-    if (this.liveCount !== undefined && prevAvg > 0) {
+    if (this.liveCount != undefined && prevAvg > 0) {
       const rawChange = ((this.liveCount - prevAvg) / prevAvg) * 100;
       this.liveOccupancyChange = Math.round(Math.min(rawChange, 100));
-    } else if (this.liveCount > 0 && prevAvg === 0) {
+    } else if (this.liveCount > 0 && prevAvg == 0) {
       this.liveOccupancyChange = 100;
     } else {
       this.liveOccupancyChange = 0;
@@ -200,7 +214,7 @@ export class OverviewDashboard implements OnInit {
     this.getDwellAnalytics(payload);
     this.getOccupanyAnalytics(payload);
     this.getDempgraphicsAnalytics(payload);
-    const { prevFromUtc, prevToUtc } = this.getPreviousDateRange(fromUtc, toUtc);
+    const { prevFromUtc, prevToUtc } = this.getPreviousDateRange(fromUtc);
     const prevPayload = {
       "siteId": this.selectedSiteId,
       "fromUtc": prevFromUtc,
