@@ -46,7 +46,7 @@ export class CrowdEntries implements OnInit, OnDestroy {
     private overviewDashboardService: OverviewDashboardService,
     private toastr: ToastrService,
     private socketService: SocketService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.selectedSiteSub = this.commonService.getFilters$().pipe(

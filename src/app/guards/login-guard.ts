@@ -5,12 +5,12 @@ import { CanActivate, Router } from '@angular/router';
   providedIn: 'root'
 })
 export class LoginGuard implements CanActivate {
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   canActivate(): boolean {
     const token = localStorage.getItem('token');
     if (token) {
-      this.router.navigate(['/overview']); 
+      this.router.navigate(['/overview']);
       return false;
     }
     return true;

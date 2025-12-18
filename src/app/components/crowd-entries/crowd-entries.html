@@ -1,5 +1,4 @@
 <div class="crowd-entries-container">
-
   <div class="table-card">
     <table class="entries-table">
       <thead>
@@ -11,9 +10,7 @@
           <th>Dwell Time</th>
         </tr>
       </thead>
-
       <tbody>
-
         @if (isTableLoading) {
         <tr>
           <td colspan="5">
@@ -39,7 +36,6 @@
         </tr>
         }
         }
-
         @else {
         <tr>
           <td colspan="5">
@@ -47,12 +43,8 @@
           </td>
         </tr>
         }
-
       </tbody>
-
     </table>
-
-
   </div>
 
   <div class="pagination">
@@ -60,18 +52,14 @@
       (click)="goToPage(pageIndex - 1)">
       arrow_back_ios_new
     </button>
-
     @for (p of visiblePages; track p) {
     <span class="page-btn" [class.active]="p === pageIndex" (click)="goToPage(p)">
       {{ p }}
     </span>
     }
-
     <button class="pagination-btn material-symbols-outlined" [disabled]="pageIndex === totalPages"
       (click)="goToPage(pageIndex + 1)">
       arrow_forward_ios
     </button>
-
   </div>
-
 </div>

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { HttpManagerService } from '../../http-manager/http-manager.service';
@@ -55,7 +55,6 @@ export class AuthService {
     this.isLoggedIn.next(false);
     this.route.navigate(['/login']);
   }
-
 
   isAuthenticated() {
     return this.isLoggedIn.asObservable();

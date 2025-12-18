@@ -3,7 +3,6 @@ import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse } fr
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
-// import { AuthService } from '../services/auth-management/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 
@@ -15,11 +14,9 @@ export class HttpInterceptorInterceptor implements HttpInterceptor {
 
   constructor(
     private router: Router,
-    // private authService: AuthService,
     public spinner: NgxSpinnerService,
     private toastr: ToastrService
   ) {
-
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -28,7 +25,6 @@ export class HttpInterceptorInterceptor implements HttpInterceptor {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
-        
         },
       });
     }
@@ -44,9 +40,8 @@ export class HttpInterceptorInterceptor implements HttpInterceptor {
           return event;
         },
         async (error) => {
-          //service down
           if (error.status == 0) {
-              this.logout();
+            this.logout();
             return Promise.reject(error);
           }
           else if (error.status == 404) {
@@ -61,11 +56,10 @@ export class HttpInterceptorInterceptor implements HttpInterceptor {
             sessionStorage.clear();
             localStorage.clear();
             this.router.navigate(['/login']).then(() => {
-              window.location.reload(); 
+              window.location.reload();
             });
             this.spinner.hide();
             return Promise.resolve(error);
-
           }
           else if (error.status === 403) {
             alert('Token Expired. Logging in again');
@@ -74,13 +68,12 @@ export class HttpInterceptorInterceptor implements HttpInterceptor {
           }
           else if (error.status === 409) {
             alert(error.error.message);
-              sessionStorage.clear();
-              localStorage.clear();
-              this.router.navigate(['/login']).then(() => {
-                window.location.reload(); 
-              });
-              this.spinner.hide();
-          
+            sessionStorage.clear();
+            localStorage.clear();
+            this.router.navigate(['/login']).then(() => {
+              window.location.reload();
+            });
+            this.spinner.hide();
             return Promise.resolve(error);
           }
           else {
@@ -88,7 +81,6 @@ export class HttpInterceptorInterceptor implements HttpInterceptor {
               this.spinner.hide();
               return Promise.resolve(error);
             }
-
             this.spinner.hide();
             return Promise.resolve(error);
           }
@@ -101,7 +93,7 @@ export class HttpInterceptorInterceptor implements HttpInterceptor {
     sessionStorage.clear();
     localStorage.clear();
     this.router.navigate(['/login']).then(() => {
-      window.location.reload(); 
+      window.location.reload();
     });
   }
 

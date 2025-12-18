@@ -33,26 +33,22 @@ export class LoginPage {
         ],
       ],
     });
-
   }
 
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
   }
 
-
   onSubmit(): void {
     this.submitted = true;
-
     if (this.loginForm.valid) {
-        this.spinner.show();
+      this.spinner.show();
       const email = this.loginForm.value.email;
       const password = this.loginForm.value.password;
       const payload = {
         email: email,
         password: password
       };
-
       this.authService.login(payload).subscribe({
         next: (response: any) => {
           if (response) {
@@ -65,12 +61,11 @@ export class LoginPage {
         error: (error: any) => {
           console.log("error", error.error?.errorMessage)
           this.toastr.error(error.error?.errorMessage || 'Login failed');
-           this.spinner.hide();
+          this.spinner.hide();
         }
       });
     } else {
       this.loginForm.markAllAsTouched();
-      
       return;
     }
   }

@@ -11,7 +11,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideAnimations(), // Required for ngx-toastr
+    provideAnimations(),
     provideToastr({ timeOut: 3000, positionClass: 'toast-top-right' }),
     provideHttpClient(withInterceptorsFromDi()),
     {

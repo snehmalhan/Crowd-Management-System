@@ -35,7 +35,7 @@ export class OverviewDashboard implements OnInit {
   liveCount: number = 0;
   isOccupancyLoading = false;
   isDemographicsLoading = false;
-   prevFootfallData: any;
+  prevFootfallData: any;
   prevDwellData: any;
   prevOccupancyData: any;
   footfallChange: number = 0;
@@ -69,10 +69,8 @@ export class OverviewDashboard implements OnInit {
       this.resetCharts();
       this.isOccupancyLoading = true;
       this.isDemographicsLoading = true;
-
-      this.callAllApi(); 
+      this.callAllApi();
     });
-
     this.initSocketListener();
   }
 
@@ -84,9 +82,7 @@ export class OverviewDashboard implements OnInit {
         const minutes = date.getMinutes().toString().padStart(2, '0');
         const seconds = date.getSeconds().toString().padStart(2, '0');
         const localTime = `${hours}:${minutes}:${seconds}`;
-
         this.liveCount = data.siteOccupancy;
-
         if (this.liveOccpancyData && this.liveOccpancyData.buckets) {
           const newOccupancyBucket = {
             local: localTime,
@@ -95,7 +91,6 @@ export class OverviewDashboard implements OnInit {
           this.liveOccpancyData.buckets.push(newOccupancyBucket);
           this.createOccupancyChart();
         }
-
         if (this.demographicsData && this.demographicsData.buckets) {
           const newDemographicsBucket = {
             local: localTime,
@@ -110,26 +105,25 @@ export class OverviewDashboard implements OnInit {
     });
   }
 
- getPreviousDateRange(currentFrom: number) {
-  const base = new Date(currentFrom);
-  const start = Date.UTC(
-    base.getUTCFullYear(),
-    base.getUTCMonth(),
-    base.getUTCDate() - 1,
-    0, 0, 0, 0
-  );
-  const end = Date.UTC(
-    base.getUTCFullYear(),
-    base.getUTCMonth(),
-    base.getUTCDate() - 1,
-    23, 59, 59, 999
-  );
-  return {
-    prevFromUtc: start,
-    prevToUtc: end
-  };
-}
-
+  getPreviousDateRange(currentFrom: number) {
+    const base = new Date(currentFrom);
+    const start = Date.UTC(
+      base.getUTCFullYear(),
+      base.getUTCMonth(),
+      base.getUTCDate() - 1,
+      0, 0, 0, 0
+    );
+    const end = Date.UTC(
+      base.getUTCFullYear(),
+      base.getUTCMonth(),
+      base.getUTCDate() - 1,
+      23, 59, 59, 999
+    );
+    return {
+      prevFromUtc: start,
+      prevToUtc: end
+    };
+  }
 
   getComparisonData(payload: any) {
     this.overviewDashboardService.getFootfallAnalytics(payload).subscribe({
@@ -138,14 +132,12 @@ export class OverviewDashboard implements OnInit {
         this.calculateFootfallChange();
       }
     });
-
     this.overviewDashboardService.getDwellAnalytics(payload).subscribe({
       next: (res: any) => {
         this.prevDwellData = res;
         this.calculateDwellChange();
       }
     });
-
     this.overviewDashboardService.getOccupanyAnalytics(payload).subscribe({
       next: (res: any) => {
         this.prevOccupancyData = res;
@@ -190,7 +182,6 @@ export class OverviewDashboard implements OnInit {
       const total = this.prevOccupancyData.buckets.reduce((acc: number, curr: any) => acc + (curr.avg || 0), 0);
       prevAvg = total / this.prevOccupancyData.buckets.length;
     }
-
     if (this.liveCount != undefined && prevAvg > 0) {
       const rawChange = ((this.liveCount - prevAvg) / prevAvg) * 100;
       this.liveOccupancyChange = Math.round(Math.min(rawChange, 100));
@@ -200,7 +191,6 @@ export class OverviewDashboard implements OnInit {
       this.liveOccupancyChange = 0;
     }
   }
-
 
   callAllApi() {
     let fromUtc = Date.parse(this.fromDate)
@@ -228,12 +218,10 @@ export class OverviewDashboard implements OnInit {
       this.occupancyChart.destroy();
       this.occupancyChart = null;
     }
-
     if (this.revenueChart) {
       this.revenueChart.destroy();
       this.revenueChart = null;
     }
-
     if (this.trafficChart) {
       this.trafficChart.destroy();
       this.trafficChart = null;
@@ -270,7 +258,6 @@ export class OverviewDashboard implements OnInit {
     return `${minutes}min ${seconds}sec`;
   }
 
-
   getOccupanyAnalytics(payload: any) {
     this.isOccupancyLoading = true;
     this.overviewDashboardService.getOccupanyAnalytics(payload).subscribe({
@@ -290,7 +277,6 @@ export class OverviewDashboard implements OnInit {
     });
   }
 
-
   getDempgraphicsAnalytics(payload: any) {
     this.isDemographicsLoading = true;
     this.overviewDashboardService.getDempgraphicsAnalytics(payload).subscribe({
@@ -307,7 +293,6 @@ export class OverviewDashboard implements OnInit {
       }
     });
   }
-
 
   getGenderDistribution(buckets: any[]) {
     if (!buckets || !buckets.length) {
@@ -364,7 +349,6 @@ export class OverviewDashboard implements OnInit {
         ctx.restore();
       }
     };
-
     this.revenueChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -389,10 +373,10 @@ export class OverviewDashboard implements OnInit {
           legend: {
             display: true,
             position: 'bottom',
-            align: 'start', 
+            align: 'start',
             labels: {
               usePointStyle: true,
-              pointStyle: 'circle', 
+              pointStyle: 'circle',
               padding: 20,
               boxWidth: 8,
               boxHeight: 8,
@@ -419,8 +403,6 @@ export class OverviewDashboard implements OnInit {
       plugins: [centerTextPlugin]
     });
   }
-
-
 
   createDemographicsAnalysisChart(): void {
     if (!this.trafficChartRef) return;
@@ -609,7 +591,6 @@ export class OverviewDashboard implements OnInit {
         const badgeH = 20;
         const badgeX = x - badgeW / 2;
         const badgeY = chartArea.top + 8;
-
         const r = 6;
         ctx.fillStyle = '#B91C1C';
         ctx.beginPath();

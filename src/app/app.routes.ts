@@ -15,7 +15,7 @@ export const routes: Routes = [
       import('./components/login-page/login-page').then(
         (m) => m.LoginPage
       ),
-      canActivate: [LoginGuard],
+    canActivate: [LoginGuard],
     data: {
       title: 'Login',
       icon: 'icon-office',

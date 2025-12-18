@@ -36,7 +36,6 @@ export class LeftMenuComponent implements OnInit {
 
   getNavigationRoutes(routesArr: any[]): any[] {
     const navItems: any[] = [];
-
     routesArr.forEach(route => {
       if (route.data && route.data.nav) {
         navItems.push({
@@ -66,9 +65,7 @@ export class LeftMenuComponent implements OnInit {
 
   leftMenuClose() {
     this.menuClose = !this.menuClose;
-
     localStorage.setItem('menuClose', this.menuClose.toString());
-
     if (this.menuClose) {
       this.renderer.addClass(document.body, 'sidebar-closed');
     } else {

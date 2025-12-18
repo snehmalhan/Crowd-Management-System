@@ -11,7 +11,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class HttpManagerService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   get(url: string): Observable<any> {
     return this.http.get(url);

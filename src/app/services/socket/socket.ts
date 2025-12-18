@@ -14,10 +14,8 @@ export class SocketService {
         token: token || ''
       }
     });
-
     this.socket.on('alert', (data) => {
     });
-
     this.socket.on('live_occupancy', (data) => {
     });
   }
