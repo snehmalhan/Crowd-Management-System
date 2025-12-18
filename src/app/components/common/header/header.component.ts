@@ -51,7 +51,7 @@ export class HeaderComponent implements OnInit {
       const range = this.calculateDateRange('today');
 
       this.commonService.setFilters(initialId, range); // ✅ ONE emission
-       this.spinner.hide();
+      this.spinner.hide();
     });
   }
 
@@ -85,15 +85,14 @@ export class HeaderComponent implements OnInit {
   calculateDateRange(value: string) {
     const today = new Date();
     let fromDate: Date;
-
+    fromDate = new Date(today);
     switch (value) {
-      case 'today': fromDate = today; break;
+      case 'today':
+        break;
       case 'yesterday':
-        fromDate = new Date(today);
         fromDate.setDate(today.getDate() - 1);
         break;
       case 'week':
-        fromDate = new Date(today);
         fromDate.setDate(today.getDate() - today.getDay());
         break;
       case 'month':
@@ -103,9 +102,9 @@ export class HeaderComponent implements OnInit {
         fromDate = new Date(today.getFullYear(), 0, 1);
         break;
       default:
-        fromDate = today;
+        break;
     }
-
+    fromDate.setHours(0, 0, 0, 0);
     return { from: fromDate, to: today };
   }
 
@@ -119,23 +118,23 @@ export class HeaderComponent implements OnInit {
     this.showAlerts = false;
   }
 
-formatAlertDate(ts: any): string {
-  const d = new Date(Number(ts));
+  formatAlertDate(ts: any): string {
+    const d = new Date(Number(ts));
 
-  const date = d.toLocaleDateString('en-US', {
-    month: 'long',
-    day: '2-digit',
-    year: 'numeric'
-  });
+    const date = d.toLocaleDateString('en-US', {
+      month: 'long',
+      day: '2-digit',
+      year: 'numeric'
+    });
 
-  const time = d.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  });
+    const time = d.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
 
-  return `${date} ${time}`;
-}
+    return `${date} ${time}`;
+  }
 
 
 
