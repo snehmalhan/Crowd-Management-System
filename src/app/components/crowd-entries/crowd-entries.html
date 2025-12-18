@@ -52,11 +52,17 @@
       (click)="goToPage(pageIndex - 1)">
       arrow_back_ios_new
     </button>
-    @for (p of visiblePages; track p) {
-    <span class="page-btn" [class.active]="p === pageIndex" (click)="goToPage(p)">
+
+    @for (p of visiblePages; track $index) {
+    @if (p === '...') {
+    <span class="ellipsis-box">...</span>
+    } @else {
+    <span class="page-btn" [class.active]="p === pageIndex" (click)="goToPage($any(p))">
       {{ p }}
     </span>
     }
+    }
+
     <button class="pagination-btn material-symbols-outlined" [disabled]="pageIndex === totalPages"
       (click)="goToPage(pageIndex + 1)">
       arrow_forward_ios

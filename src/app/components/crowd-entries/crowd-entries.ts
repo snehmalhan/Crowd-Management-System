@@ -26,12 +26,12 @@ interface EntryRow {
 export class CrowdEntries implements OnInit, OnDestroy {
 
   pageIndex = 1;
-  pageSize = 7;
+  pageSize = 50;
   totalPages = 0;
 
   entries: EntryRow[] = [];
   paginatedEntries: EntryRow[] = [];
-  visiblePages: number[] = [];
+  visiblePages: (number | string)[] = [];
 
   selectedSiteId: string | null = null;
   fromDate: any;
@@ -77,7 +77,10 @@ export class CrowdEntries implements OnInit, OnDestroy {
   getEntryExitData(): void {
     this.isTableLoading = true;
 
+
     const payload = {
+      pageSize: this.pageSize,
+      pageNumber: this.pageIndex,
       siteId: this.selectedSiteId,
       fromUtc: Date.parse(this.fromDate),
       toUtc: Date.parse(this.toDate)
@@ -91,8 +94,9 @@ export class CrowdEntries implements OnInit, OnDestroy {
           this.mapApiRow(r, i)
         );
 
-        this.pageIndex = 1;
-        this.updatePagination();
+        this.paginatedEntries = this.entries;
+        this.totalPages = res?.totalPages;
+        this.buildVisiblePages();
         this.isTableLoading = false;
       },
       error: () => {
@@ -108,55 +112,46 @@ export class CrowdEntries implements OnInit, OnDestroy {
 
       const newRow = this.mapApiRow(data, 0);
 
-      this.entries.unshift(newRow);
-      this.totalPages = Math.ceil(this.entries.length / this.pageSize);
-
+      // Only add to current view if we are on the first page
       if (this.pageIndex === 1) {
         this.paginatedEntries.unshift(newRow);
-
         if (this.paginatedEntries.length > this.pageSize) {
           this.paginatedEntries.pop();
         }
       }
-
-      this.buildVisiblePages();
     });
   }
 
-
-  updatePagination(): void {
-    this.totalPages = Math.ceil(this.entries.length / this.pageSize);
-
-    const start = (this.pageIndex - 1) * this.pageSize;
-    const end = start + this.pageSize;
-
-    this.paginatedEntries = this.entries.slice(start, end);
-    this.buildVisiblePages();
-  }
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
 
     this.pageIndex = page;
-    this.updatePagination();
+    this.getEntryExitData();
   }
 
   buildVisiblePages(): void {
-    const maxVisible = 5;
-    const pages: number[] = [];
+    const total = this.totalPages;
+    const current = this.pageIndex;
+    const rangeWithDots: (number | string)[] = [];
 
-    let start = Math.max(1, this.pageIndex - Math.floor(maxVisible / 2));
-    let end = Math.min(this.totalPages, start + maxVisible - 1);
-
-    if (end - start < maxVisible - 1) {
-      start = Math.max(1, end - maxVisible + 1);
+    if (total <= 5) {
+      // 1 2 3 4 5
+      for (let i = 1; i <= total; i++) rangeWithDots.push(i);
+    } else {
+      if (current <= 3) {
+        // Start: 1 2 3 ... N
+        rangeWithDots.push(1, 2, 3, '...', total);
+      } else if (current >= total - 2) {
+        // End: 1 ... N-2 N-1 N
+        rangeWithDots.push(1, '...', total - 2, total - 1, total);
+      } else {
+        // Middle: 1 ... current ... N
+        rangeWithDots.push(1, '...', current, '...', total);
+      }
     }
 
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    this.visiblePages = pages;
+    this.visiblePages = rangeWithDots;
   }
 
 
